@@ -1,0 +1,2402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>TXT Reader</title>
+
+  <link
+    rel="shortcut icon"
+    href="./image/mubai.ico"
+    type="image/x-icon"
+  >
+
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background:
+        url("./image/ABBY.jpg")
+        center center / cover no-repeat fixed;
+
+      font-family: Arial, sans-serif;
+
+      min-height: 100vh;
+    }
+
+    li {
+      list-style: none;
+    }
+
+
+    /* ========================================
+       H3
+    ======================================== */
+
+    h3 {
+      height: auto;
+      min-height: 35px;
+
+      line-height: 30px;
+
+      margin: 10px;
+
+      padding: 2px 8px;
+
+      border: 2px solid #fdc305;
+
+      background:
+        linear-gradient(
+          to bottom,
+          rgba(0,0,0,0.2),
+          rgba(0,0,0,0.6)
+        );
+
+      border-radius: 13px;
+
+      text-align: center;
+
+      color:
+        rgb(251,255,1);
+
+      box-shadow:
+        2px 2px 3px
+        rgba(187,140,9,0.5);
+    }
+
+
+    /* ========================================
+       H4
+    ======================================== */
+
+    h4 {
+      width: fit-content;
+
+      padding:
+        2px 10px;
+
+      margin-left: 10px;
+      margin-right: 30px;
+      margin-bottom: 3px;
+
+      color:
+        rgb(48,4,136);
+
+      box-shadow:
+        0 0 0 1px #bfcedbc4,
+        inset 0 0 0 1px #b4cce4c4;
+
+      border-radius: 8px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #eaf2fab9,
+          #839fb880
+        );
+
+      font-size: 14px;
+    }
+
+
+    /* ========================================
+       H5
+    ======================================== */
+
+    h5 {
+      width: fit-content;
+
+      padding:
+        2px 10px;
+
+      margin-left: 10px;
+      margin-bottom: 3px;
+
+      color:
+        #49137ac4;
+
+      border:
+        1px solid #9ab4ccc4;
+
+      border-radius: 8px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #74e0a1b9,
+          #189c4fb9
+        );
+
+      font-size: 14px;
+    }
+
+
+    span {
+      display: block;
+    }
+
+
+    /* ========================================
+       IMAGE
+    ======================================== */
+
+    img {
+      width: 150px;
+      height: 150px;
+
+      margin:
+        5px 3px 10px 13px;
+
+      transition:
+        transform 0.3s ease-in-out;
+
+      object-fit: cover;
+    }
+
+    img:hover {
+      transform:
+        scale(1.2);
+    }
+
+
+    /* ========================================
+       FILE BUTTON
+    ======================================== */
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .fileBox {
+      width: fit-content;
+
+      margin:
+        10px auto;
+    }
+
+    .custom-file-input {
+      display: inline-block;
+
+      background-color:
+        #fda10d;
+
+      color: white;
+
+      padding:
+        10px 15px;
+
+      margin:
+        0 10px;
+
+      border: none;
+
+      border-radius:
+        5px;
+
+      cursor: pointer;
+    }
+
+    .fileBox:hover
+    .custom-file-input {
+
+      background-color:
+        #f39d12e5;
+    }
+
+
+    /* ========================================
+       MAIN
+    ======================================== */
+
+    .box {
+      display: flex;
+
+      margin:
+        10px auto;
+
+      width: 100%;
+    }
+
+
+    /* ========================================
+       LEFT MENU
+    ======================================== */
+
+    .menuLeft {
+
+      width: 190px;
+
+      flex-shrink: 0;
+    }
+
+
+    /*
+     * H3 menu ကို screen ဘယ်ဘက်မှာ
+     * fixed ထားပြီး h3 များရင်
+     * menu ကို သီးသန့် scroll လုပ်နိုင်မယ်
+     */
+
+    .menuLeft ul {
+
+      position: fixed;
+
+      top: 15px;
+      left: 8px;
+
+      width: 180px;
+
+      max-height:
+        calc(100vh - 30px);
+
+      overflow-y: auto;
+      overflow-x: hidden;
+
+      padding-right: 5px;
+    }
+
+
+    /*
+     * Scrollbar
+     */
+
+    .menuLeft ul::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .menuLeft ul::-webkit-scrollbar-track {
+      background:
+        rgba(0,0,0,0.15);
+
+      border-radius: 10px;
+    }
+
+    .menuLeft ul::-webkit-scrollbar-thumb {
+      background:
+        rgba(255,255,255,0.65);
+
+      border-radius: 10px;
+    }
+
+
+    /*
+     * H3 menu item
+     */
+
+    .menuLeft ul li {
+
+      width: 100%;
+
+      margin-bottom: 4px;
+
+      padding:
+        7px 8px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #2fa6dd,
+          #045e88
+        );
+
+      border-radius:
+        10px;
+
+      line-height:
+        20px;
+
+      color: white;
+
+      cursor: pointer;
+
+      /*
+       * နာမည်ရှည်ရင်လည်း
+       * စာကြောင်းခွဲပြီး အကုန်ပြ
+       */
+
+      white-space:
+        normal;
+
+      overflow-wrap:
+        anywhere;
+
+      word-break:
+        break-word;
+
+      font-size:
+        14px;
+
+      transition:
+        0.2s;
+    }
+
+
+    /*
+     * H3 7 ခုမြောက်ကစပြီး
+     * အရောင်ပြောင်း
+     */
+
+    .menuLeft ul li:nth-child(n + 7) {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #54b448,
+          #1f7014
+        );
+    }
+
+
+    /*
+     * H3 16 ခုမြောက်ကစပြီး
+     * အရောင်ပြောင်း
+     */
+
+    .menuLeft ul li:nth-child(n + 16) {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #5cafe6,
+          #1a6c85
+        );
+    }
+
+
+    /*
+     * Mouse hover
+     */
+
+    .menuLeft ul li:hover {
+
+      background:
+        linear-gradient(
+          to bottom,
+          hotpink,
+          darkorange
+        );
+    }
+
+
+    /*
+     * Selected H3
+     */
+
+    .menuLeft ul li.highlight {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #db52b2,
+          #ad0789
+        ) !important;
+
+      color:
+        white !important;
+
+      box-shadow:
+        0 0 8px
+        rgba(219,82,178,0.7);
+    }
+
+
+    /* ========================================
+       OUTPUT
+    ======================================== */
+
+    #output {
+
+      flex-grow: 1;
+
+      min-width: 0;
+
+      padding-bottom:
+        20px;
+    }
+
+
+    #output p {
+
+      position: relative;
+
+      width: fit-content;
+
+      max-width:
+        calc(100% - 20px);
+
+      height: auto;
+
+      padding:
+        6px 8px;
+
+      margin:
+        0 10px 5px 10px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          white,
+          #f0f0f0
+        );
+
+      border-radius:
+        8px;
+
+      color:
+        black;
+
+      font-size:
+        17px;
+
+      cursor:
+        pointer;
+
+      box-shadow:
+        2px 2px 4px
+        #575757da;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+
+    #output p:hover {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #fcd,
+          #fca
+        );
+    }
+
+
+    /*
+     * Copy ပြီးသားစာ
+     */
+
+    p.active::before {
+
+      content:
+        "❣️";
+
+      left:
+        -20px;
+
+      position:
+        absolute;
+
+      font-size:
+        20px;
+    }
+
+
+    /* ========================================
+       COLORS
+    ======================================== */
+
+    #output p.color-red {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #ff6b6b,
+          #d90429
+        ) !important;
+
+      color:
+        white !important;
+    }
+
+
+    #output p.color-yellow {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #fff176,
+          #fbc02d
+        ) !important;
+
+      color:
+        #3d3200 !important;
+    }
+
+
+    #output p.color-green {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #69f0ae,
+          #00a651
+        ) !important;
+
+      color:
+        white !important;
+    }
+
+
+    #output p.color-blue {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #64b5f6,
+          #1976d2
+        ) !important;
+
+      color:
+        white !important;
+    }
+
+
+    #output p.color-purple {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #ce93d8,
+          #8e24aa
+        ) !important;
+
+      color:
+        white !important;
+    }
+
+
+    /* ========================================
+       TELEGRAM / URL
+    ======================================== */
+
+    .telegram-link {
+
+      display:
+        inline-block;
+
+      width:
+        fit-content;
+
+      padding:
+        8px 14px;
+
+      margin:
+        4px 10px 8px 10px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #36aeea,
+          #168dcc
+        );
+
+      color:
+        white;
+
+      text-decoration:
+        none;
+
+      border-radius:
+        9px;
+
+      font-size:
+        16px;
+
+      font-weight:
+        bold;
+
+      box-shadow:
+        2px 2px 4px
+        rgba(0,0,0,0.35);
+
+      transition:
+        0.2s;
+    }
+
+
+    .telegram-link:hover {
+
+      background:
+        linear-gradient(
+          to bottom,
+          #55c5f5,
+          #087bb9
+        );
+
+      transform:
+        scale(1.04);
+    }
+
+
+    /* ========================================
+       CONTEXT MENU
+    ======================================== */
+
+    .color-menu {
+
+      position:
+        fixed;
+
+      display:
+        none;
+
+      z-index:
+        9999;
+
+      min-width:
+        190px;
+
+      max-width:
+        calc(100vw - 20px);
+
+      background:
+        white;
+
+      border-radius:
+        10px;
+
+      padding:
+        6px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.35);
+    }
+
+
+    .color-menu button {
+
+      width:
+        100%;
+
+      border:
+        none;
+
+      padding:
+        9px 10px;
+
+      margin:
+        2px 0;
+
+      border-radius:
+        6px;
+
+      text-align:
+        left;
+
+      cursor:
+        pointer;
+
+      font-size:
+        14px;
+    }
+
+
+    .color-menu button:hover {
+
+      filter:
+        brightness(0.92);
+    }
+
+
+    .red-btn {
+
+      background:
+        #ff6b6b;
+
+      color:
+        white;
+    }
+
+
+    .yellow-btn {
+
+      background:
+        #fff176;
+
+      color:
+        #3d3200;
+    }
+
+
+    .green-btn {
+
+      background:
+        #69f0ae;
+
+      color:
+        #064b25;
+    }
+
+
+    .blue-btn {
+
+      background:
+        #64b5f6;
+
+      color:
+        white;
+    }
+
+
+    .purple-btn {
+
+      background:
+        #ce93d8;
+
+      color:
+        white;
+    }
+
+
+    .normal-btn {
+
+      background:
+        #eeeeee;
+
+      color:
+        black;
+    }
+
+
+    /* ========================================
+       POPUP
+    ======================================== */
+
+    .popup {
+
+      position:
+        fixed;
+
+      top:
+        150px;
+
+      left:
+        50%;
+
+      transform:
+        translateX(-50%);
+
+      width:
+        fit-content;
+
+      max-width:
+        calc(100vw - 40px);
+
+      background:
+        linear-gradient(
+          to bottom,
+          #e79d2dde,
+          #b6710ae3
+        );
+
+      padding:
+        10px 20px;
+
+      color:
+        white;
+
+      border-radius:
+        10px;
+
+      font-size:
+        22px;
+
+      font-weight:
+        550;
+
+      z-index:
+        10000;
+
+      opacity:
+        0;
+
+      transition:
+        opacity 0.5s;
+    }
+
+
+    .popup.show {
+
+      opacity:
+        1;
+    }
+
+
+    /* ========================================
+       MOBILE
+    ======================================== */
+
+    @media screen and (max-width: 539px) {
+
+      .menuLeft {
+
+        width:
+          125px;
+      }
+
+
+      .menuLeft ul {
+
+        width:
+          115px;
+
+        left:
+          5px;
+
+        top:
+          8px;
+
+        max-height:
+          calc(100vh - 16px);
+      }
+
+
+      .menuLeft ul li {
+
+        font-size:
+          12px;
+
+        padding:
+          6px;
+
+        line-height:
+          17px;
+      }
+
+
+      #output p {
+
+        font-size:
+          16px;
+
+        margin-left:
+          5px;
+
+        margin-right:
+          5px;
+      }
+
+
+      h3 {
+
+        margin:
+          8px 5px;
+      }
+
+    }
+
+
+    /* ========================================
+       DESKTOP
+    ======================================== */
+
+    @media screen and (min-width: 540px) {
+
+      .box {
+
+        width:
+          520px;
+      }
+
+    }
+
+
+    @media screen and (min-width: 740px) {
+
+      .box {
+
+        width:
+          680px;
+      }
+
+    }
+
+
+    @media screen and (min-width: 860px) {
+
+      .box {
+
+        width:
+          840px;
+      }
+
+    }
+
+
+    @media screen and (min-width: 1040px) {
+
+      .box {
+
+        width:
+          1010px;
+      }
+
+
+      #output p {
+
+        margin-bottom:
+          6px;
+
+        padding:
+          8px 5px;
+      }
+
+    }
+
+
+    @media screen and (min-width: 1280px) {
+
+      .box {
+
+        width:
+          1240px;
+      }
+
+
+      #output p {
+
+        margin-bottom:
+          5px;
+
+        padding:
+          8px 5px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+  <!-- ========================================
+       MAIN
+  ======================================== -->
+
+  <div class="box">
+
+    <div class="menuLeft">
+
+      <ul id="h3List"></ul>
+
+    </div>
+
+
+    <div id="output"></div>
+
+  </div>
+
+
+  <!-- ========================================
+       FILE SELECT
+  ======================================== -->
+
+  <div class="fileBox">
+
+    <label
+      for="txtFileInput"
+      class="custom-file-input"
+    >
+      选择文件
+    </label>
+
+
+    <input
+      type="file"
+      id="txtFileInput"
+      accept=".txt"
+    >
+
+  </div>
+
+
+  <!-- ========================================
+       COLOR MENU
+  ======================================== -->
+
+  <div
+    id="colorMenu"
+    class="color-menu"
+  >
+
+    <button
+      class="red-btn"
+      onclick="setSelectedColor('red')"
+    >
+      🔴 အရေးကြီး / Red
+    </button>
+
+
+    <button
+      class="yellow-btn"
+      onclick="setSelectedColor('yellow')"
+    >
+      🟡 သတိထားရန် / Yellow
+    </button>
+
+
+    <button
+      class="green-btn"
+      onclick="setSelectedColor('green')"
+    >
+      🟢 ပြီးပြီ / Green
+    </button>
+
+
+    <button
+      class="blue-btn"
+      onclick="setSelectedColor('blue')"
+    >
+      🔵 မှတ်ထားရန် / Blue
+    </button>
+
+
+    <button
+      class="purple-btn"
+      onclick="setSelectedColor('purple')"
+    >
+      🟣 အခြား / Purple
+    </button>
+
+
+    <button
+      class="normal-btn"
+      onclick="setSelectedColor('normal')"
+    >
+      ⚪ Normal ပြန်ထား
+    </button>
+
+  </div>
+
+
+  <script>
+
+
+    /* ========================================
+       GLOBAL VARIABLES
+    ======================================== */
+
+    let highlightedTag =
+      null;
+
+    let highlightedLi =
+      null;
+
+    let selectedParagraph =
+      null;
+
+    let currentFileKey =
+      "";
+
+    let paragraphCounter =
+      0;
+
+
+    /* ========================================
+       FILE INPUT
+    ======================================== */
+
+    document
+      .getElementById(
+        "txtFileInput"
+      )
+      .addEventListener(
+        "change",
+        handleFile
+      );
+
+
+    /* ========================================
+       HANDLE FILE
+    ======================================== */
+
+    function handleFile(event) {
+
+      const file =
+        event.target.files[0];
+
+
+      const outputDiv =
+        document.getElementById(
+          "output"
+        );
+
+
+      const h3List =
+        document.getElementById(
+          "h3List"
+        );
+
+
+      const title =
+        document.querySelector(
+          "title"
+        );
+
+
+      if (!file) {
+
+        outputDiv.textContent =
+          "请选择一个文件。";
+
+        return;
+      }
+
+
+      /* Clear */
+
+      outputDiv.innerHTML =
+        "";
+
+      h3List.innerHTML =
+        "";
+
+      highlightedTag =
+        null;
+
+      highlightedLi =
+        null;
+
+      selectedParagraph =
+        null;
+
+      paragraphCounter =
+        0;
+
+
+      /* File name */
+
+      const fileName =
+        file.name.replace(
+          /\.[^/.]+$/,
+          ""
+        );
+
+
+      title.textContent =
+        fileName;
+
+
+      /*
+       * LocalStorage key
+       */
+
+      currentFileKey =
+        "txtColors_" +
+        file.name;
+
+
+      const reader =
+        new FileReader();
+
+
+      reader.onload =
+        function(event) {
+
+          const content =
+            event.target.result;
+
+
+          const lines =
+            content.split(
+              /\r?\n/
+            );
+
+
+          let currentP =
+            null;
+
+
+          lines.forEach(
+            function(line) {
+
+              line =
+                line.trim();
+
+
+              /* =================================
+                 H3
+              ================================= */
+
+              if (
+                /^h3\b/i.test(line)
+              ) {
+
+                /*
+                 * h3(new)
+                 * h3(bank)
+                 * h3(why need to deposit)
+                 *
+                 * အားလုံးကို support လုပ်မယ်
+                 */
+
+                let h3Content =
+                  line
+                    .replace(
+                      /^h3\b/i,
+                      ""
+                    )
+                    .trim();
+
+
+                /*
+                 * ( ) ထဲကစာကို
+                 * အပြည့်အစုံယူ
+                 */
+
+                if (
+                  h3Content.startsWith("(") &&
+                  h3Content.endsWith(")")
+                ) {
+
+                  h3Content =
+                    h3Content.slice(
+                      1,
+                      -1
+                    ).trim();
+
+                }
+
+
+                if (h3Content) {
+
+                  const h3 =
+                    document.createElement(
+                      "h3"
+                    );
+
+
+                  h3.textContent =
+                    h3Content;
+
+
+                  outputDiv.appendChild(
+                    h3
+                  );
+
+
+                  /*
+                   * Left menu item
+                   */
+
+                  const li =
+                    document.createElement(
+                      "li"
+                    );
+
+
+                  /*
+                   * အပြည့်အစုံပြမယ်
+                   */
+
+                  li.textContent =
+                    h3Content;
+
+
+                  /*
+                   * H3 ကိုမှတ်ထား
+                   */
+
+                  li.dataset.h3Text =
+                    h3Content;
+
+
+                  li.addEventListener(
+                    "click",
+                    function() {
+
+                      scrollToH3(
+                        h3
+                      );
+
+
+                      highlightLi(
+                        li
+                      );
+
+                    }
+                  );
+
+
+                  h3List.appendChild(
+                    li
+                  );
+
+                }
+
+
+                currentP =
+                  null;
+
+                return;
+              }
+
+
+              /* =================================
+                 H4
+              ================================= */
+
+              if (
+                /^h4\b/i.test(line)
+              ) {
+
+                const h4Content =
+                  line
+                    .replace(
+                      /^h4\b/i,
+                      ""
+                    )
+                    .trim();
+
+
+                if (h4Content) {
+
+                  const h4 =
+                    document.createElement(
+                      "h4"
+                    );
+
+
+                  h4.textContent =
+                    h4Content;
+
+
+                  outputDiv.appendChild(
+                    h4
+                  );
+
+                }
+
+
+                return;
+              }
+
+
+              /* =================================
+                 H5
+              ================================= */
+
+              if (
+                /^h5\b/i.test(line)
+              ) {
+
+                const h5Content =
+                  line
+                    .replace(
+                      /^h5\b/i,
+                      ""
+                    )
+                    .trim();
+
+
+                if (h5Content) {
+
+                  const h5 =
+                    document.createElement(
+                      "h5"
+                    );
+
+
+                  h5.textContent =
+                    h5Content;
+
+
+                  outputDiv.appendChild(
+                    h5
+                  );
+
+                }
+
+
+                return;
+              }
+
+
+              /* =================================
+                 SPAN
+              ================================= */
+
+              if (
+                /^span\b/i.test(line)
+              ) {
+
+                const spanContent =
+                  line
+                    .replace(
+                      /^span\b/i,
+                      ""
+                    )
+                    .trim();
+
+
+                if (
+                  spanContent &&
+                  currentP
+                ) {
+
+                  const span =
+                    document.createElement(
+                      "span"
+                    );
+
+
+                  span.textContent =
+                    spanContent;
+
+
+                  currentP.appendChild(
+                    span
+                  );
+
+                }
+
+
+                return;
+              }
+
+
+              /* =================================
+                 IMAGE
+              ================================= */
+
+              if (
+                line.startsWith("./")
+              ) {
+
+                const imgSrc =
+                  line
+                    .slice(2)
+                    .trim();
+
+
+                if (imgSrc) {
+
+                  const img =
+                    document.createElement(
+                      "img"
+                    );
+
+
+                  img.src =
+                    "./" + imgSrc;
+
+
+                  img.alt =
+                    "";
+
+
+                  outputDiv.appendChild(
+                    img
+                  );
+
+                }
+
+
+                return;
+              }
+
+
+              /* =================================
+                 EMPTY LINE
+              ================================= */
+
+              if (!line) {
+
+                currentP =
+                  null;
+
+                return;
+              }
+
+
+              /* =================================
+                 TELEGRAM LINK
+              ================================= */
+
+              if (
+                isTelegramLink(line)
+              ) {
+
+                createTelegramLink(
+                  line,
+                  outputDiv
+                );
+
+
+                currentP =
+                  null;
+
+                return;
+              }
+
+
+              /* =================================
+                 NORMAL URL
+              ================================= */
+
+              if (
+                isURL(line)
+              ) {
+
+                createURLLink(
+                  line,
+                  outputDiv
+                );
+
+
+                currentP =
+                  null;
+
+                return;
+              }
+
+
+              /* =================================
+                 NORMAL TEXT
+              ================================= */
+
+              currentP =
+                document.createElement(
+                  "p"
+                );
+
+
+              currentP.textContent =
+                line;
+
+
+              currentP.dataset.index =
+                getNextParagraphIndex();
+
+
+              /*
+               * Left click = COPY
+               */
+
+              currentP.addEventListener(
+                "click",
+                copyText
+              );
+
+
+              /*
+               * Right click = COLOR MENU
+               */
+
+              currentP.addEventListener(
+                "contextmenu",
+                function(e) {
+
+                  e.preventDefault();
+
+
+                  selectedParagraph =
+                    e.currentTarget;
+
+
+                  showColorMenu(
+                    e.clientX,
+                    e.clientY,
+                    e.currentTarget
+                  );
+
+                }
+              );
+
+
+              outputDiv.appendChild(
+                currentP
+              );
+
+
+              /*
+               * Restore saved color
+               */
+
+              restoreParagraphColor(
+                currentP
+              );
+
+            }
+          );
+
+        };
+
+
+      reader.readAsText(
+        file,
+        "UTF-8"
+      );
+
+    }
+
+
+    /* ========================================
+       PARAGRAPH INDEX
+    ======================================== */
+
+    function getNextParagraphIndex() {
+
+      paragraphCounter++;
+
+      return paragraphCounter;
+
+    }
+
+
+    /* ========================================
+       TELEGRAM CHECK
+    ======================================== */
+
+    function isTelegramLink(text) {
+
+      return /^https?:\/\/t\.me\/\S+$/i.test(
+        text
+      );
+
+    }
+
+
+    /* ========================================
+       TELEGRAM LINK
+    ======================================== */
+
+    function createTelegramLink(
+      url,
+      outputDiv
+    ) {
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.className =
+        "telegram-link";
+
+
+      link.href =
+        url;
+
+
+      link.target =
+        "_blank";
+
+
+      link.rel =
+        "noopener noreferrer";
+
+
+      link.textContent =
+        "✈️ Open Telegram";
+
+
+      /*
+       * Link ကိုနှိပ်ရင်
+       * တန်းသွားမယ်
+       *
+       * Copy လုပ်တာနဲ့
+       * link ဖွင့်တာ သီးခြား
+       */
+
+      outputDiv.appendChild(
+        link
+      );
+
+    }
+
+
+    /* ========================================
+       URL CHECK
+    ======================================== */
+
+    function isURL(text) {
+
+      return /^https?:\/\/\S+$/i.test(
+        text
+      );
+
+    }
+
+
+    /* ========================================
+       NORMAL URL
+    ======================================== */
+
+    function createURLLink(
+      url,
+      outputDiv
+    ) {
+
+      const link =
+        document.createElement(
+          "a"
+        );
+
+
+      link.className =
+        "telegram-link";
+
+
+      link.href =
+        url;
+
+
+      link.target =
+        "_blank";
+
+
+      link.rel =
+        "noopener noreferrer";
+
+
+      link.textContent =
+        "🔗 Open Link";
+
+
+      outputDiv.appendChild(
+        link
+      );
+
+    }
+
+
+    /* ========================================
+       COPY TEXT
+    ======================================== */
+
+    function copyText(event) {
+
+      /*
+       * ပုံမှန် Left click ပဲ copy
+       */
+
+      if (
+        event.button !== 0
+      ) {
+
+        return;
+
+      }
+
+
+      const pTag =
+        event.currentTarget;
+
+
+      let textToCopy =
+        "";
+
+
+      for (
+        let i = 0;
+        i < pTag.childNodes.length;
+        i++
+      ) {
+
+        const childNode =
+          pTag.childNodes[i];
+
+
+        if (
+          childNode.nodeType ===
+          Node.TEXT_NODE
+        ) {
+
+          textToCopy +=
+            childNode.textContent;
+
+        }
+
+        else if (
+          childNode.tagName ===
+          "SPAN"
+        ) {
+
+          textToCopy +=
+            "\n" +
+            childNode.textContent;
+
+        }
+
+      }
+
+
+      copyToClipboard(
+        textToCopy
+      );
+
+
+      showPopup(
+        "✅ Copied!"
+      );
+
+
+      if (highlightedTag) {
+
+        highlightedTag.classList.remove(
+          "active"
+        );
+
+      }
+
+
+      pTag.classList.add(
+        "active"
+      );
+
+
+      highlightedTag =
+        pTag;
+
+    }
+
+
+    /* ========================================
+       CLIPBOARD
+    ======================================== */
+
+    function copyToClipboard(
+      text
+    ) {
+
+      /*
+       * Modern Clipboard API
+       */
+
+      if (
+        navigator.clipboard &&
+        window.isSecureContext
+      ) {
+
+        navigator.clipboard
+          .writeText(text)
+          .catch(
+            function() {
+
+              fallbackCopy(
+                text
+              );
+
+            }
+          );
+
+        return;
+      }
+
+
+      fallbackCopy(
+        text
+      );
+
+    }
+
+
+    function fallbackCopy(
+      text
+    ) {
+
+      const textarea =
+        document.createElement(
+          "textarea"
+        );
+
+
+      textarea.value =
+        text;
+
+
+      textarea.style.position =
+        "fixed";
+
+      textarea.style.left =
+        "-9999px";
+
+
+      document.body.appendChild(
+        textarea
+      );
+
+
+      textarea.focus();
+
+      textarea.select();
+
+
+      try {
+
+        document.execCommand(
+          "copy"
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Copy failed:",
+          error
+        );
+
+      }
+
+
+      document.body.removeChild(
+        textarea
+      );
+
+    }
+
+
+    /* ========================================
+       COLOR MENU
+    ======================================== */
+
+    function showColorMenu(
+      x,
+      y,
+      paragraph
+    ) {
+
+      const menu =
+        document.getElementById(
+          "colorMenu"
+        );
+
+
+      selectedParagraph =
+        paragraph;
+
+
+      menu.style.display =
+        "block";
+
+
+      /*
+       * Screen အပြင်မထွက်အောင်
+       */
+
+      const menuWidth =
+        menu.offsetWidth;
+
+
+      const menuHeight =
+        menu.offsetHeight;
+
+
+      let finalX =
+        x;
+
+      let finalY =
+        y;
+
+
+      if (
+        x + menuWidth >
+        window.innerWidth
+      ) {
+
+        finalX =
+          window.innerWidth -
+          menuWidth -
+          10;
+
+      }
+
+
+      if (
+        y + menuHeight >
+        window.innerHeight
+      ) {
+
+        finalY =
+          window.innerHeight -
+          menuHeight -
+          10;
+
+      }
+
+
+      menu.style.left =
+        Math.max(
+          5,
+          finalX
+        ) + "px";
+
+
+      menu.style.top =
+        Math.max(
+          5,
+          finalY
+        ) + "px";
+
+    }
+
+
+    /* ========================================
+       SET COLOR
+    ======================================== */
+
+    function setSelectedColor(
+      color
+    ) {
+
+      if (
+        !selectedParagraph
+      ) {
+
+        return;
+
+      }
+
+
+      selectedParagraph.classList.remove(
+        "color-red",
+        "color-yellow",
+        "color-green",
+        "color-blue",
+        "color-purple"
+      );
+
+
+      if (
+        color !== "normal"
+      ) {
+
+        selectedParagraph.classList.add(
+          "color-" + color
+        );
+
+      }
+
+
+      saveParagraphColor(
+        selectedParagraph,
+        color
+      );
+
+
+      hideColorMenu();
+
+
+      showPopup(
+        "🎨 Color saved"
+      );
+
+    }
+
+
+    /* ========================================
+       SAVE COLOR
+    ======================================== */
+
+    function saveParagraphColor(
+      paragraph,
+      color
+    ) {
+
+      if (
+        !currentFileKey
+      ) {
+
+        return;
+
+      }
+
+
+      let data = {};
+
+
+      try {
+
+        data =
+          JSON.parse(
+            localStorage.getItem(
+              currentFileKey
+            ) || "{}"
+          );
+
+      }
+
+      catch (error) {
+
+        data = {};
+
+      }
+
+
+      const index =
+        paragraph.dataset.index;
+
+
+      data[index] =
+        color;
+
+
+      localStorage.setItem(
+        currentFileKey,
+        JSON.stringify(data)
+      );
+
+    }
+
+
+    /* ========================================
+       RESTORE COLOR
+    ======================================== */
+
+    function restoreParagraphColor(
+      paragraph
+    ) {
+
+      if (
+        !currentFileKey
+      ) {
+
+        return;
+
+      }
+
+
+      let data = {};
+
+
+      try {
+
+        data =
+          JSON.parse(
+            localStorage.getItem(
+              currentFileKey
+            ) || "{}"
+          );
+
+      }
+
+      catch (error) {
+
+        data = {};
+
+      }
+
+
+      const index =
+        paragraph.dataset.index;
+
+
+      const color =
+        data[index];
+
+
+      if (
+        color &&
+        color !== "normal"
+      ) {
+
+        paragraph.classList.add(
+          "color-" + color
+        );
+
+      }
+
+    }
+
+
+    /* ========================================
+       HIDE COLOR MENU
+    ======================================== */
+
+    function hideColorMenu() {
+
+      const menu =
+        document.getElementById(
+          "colorMenu"
+        );
+
+
+      menu.style.display =
+        "none";
+
+    }
+
+
+    /* ========================================
+       CLICK OUTSIDE
+    ======================================== */
+
+    document.addEventListener(
+      "click",
+      function(event) {
+
+        const menu =
+          document.getElementById(
+            "colorMenu"
+          );
+
+
+        if (
+          !menu.contains(
+            event.target
+          )
+        ) {
+
+          hideColorMenu();
+
+        }
+
+      }
+    );
+
+
+    /* ========================================
+       SCROLL H3
+    ======================================== */
+
+    function scrollToH3(
+      h3Element
+    ) {
+
+      h3Element.scrollIntoView({
+
+        behavior:
+          "smooth",
+
+        block:
+          "start"
+
+      });
+
+    }
+
+
+    /* ========================================
+       HIGHLIGHT H3 MENU
+    ======================================== */
+
+    function highlightLi(
+      liElement
+    ) {
+
+      if (
+        highlightedLi
+      ) {
+
+        highlightedLi.classList.remove(
+          "highlight"
+        );
+
+      }
+
+
+      liElement.classList.add(
+        "highlight"
+      );
+
+
+      highlightedLi =
+        liElement;
+
+
+      /*
+       * Menu ထဲမှာလည်း
+       * selected item ကို
+       * အလိုအလျောက်မြင်ရအောင်
+       */
+
+      liElement.scrollIntoView({
+
+        behavior:
+          "smooth",
+
+        block:
+          "nearest"
+
+      });
+
+    }
+
+
+    /* ========================================
+       POPUP
+    ======================================== */
+
+    function showPopup(
+      message
+    ) {
+
+      const popup =
+        document.createElement(
+          "div"
+        );
+
+
+      popup.className =
+        "popup";
+
+
+      popup.textContent =
+        message;
+
+
+      document.body.appendChild(
+        popup
+      );
+
+
+      setTimeout(
+        function() {
+
+          popup.classList.add(
+            "show"
+          );
+
+        },
+        10
+      );
+
+
+      setTimeout(
+        function() {
+
+          popup.classList.remove(
+            "show"
+          );
+
+
+          setTimeout(
+            function() {
+
+              if (
+                popup.parentNode
+              ) {
+
+                popup.parentNode.removeChild(
+                  popup
+                );
+
+              }
+
+            },
+            500
+          );
+
+        },
+        1200
+      );
+
+    }
+
+
+  </script>
+
+</body>
+</html>
